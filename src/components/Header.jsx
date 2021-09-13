@@ -2,20 +2,28 @@
 import Image from 'next/image';
 import { MenuIcon, SearchIcon } from '@heroicons/react/outline';
 import { FiShoppingBag } from 'react-icons/fi';
+import { signIn, signOut, useSession } from 'next-auth/client';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { selectItems } from '../slices/basketSlice';
 
 function Header() {
+	const [session] = useSession();
+	const router = useRouter();
+	const items = useSelector(selectItems);
 	return (
 		<header>
 			{/* Top Nav */}
 			<div className="flex items-center p-1 flex-grow py-2 bg-amazon_blue">
 				<div className="mt-2 flex items-center flex-grow sm:flex-grow-0">
 					<Image
+						onClick={() => router.push('/')}
 						src="https://i.ibb.co/nMHYPsp/image.png"
 						width="150"
 						height="40"
 						objectFit="contain"
 						className="cursor-pointer"
-						alt=""
+						alt="Amazon2.0"
 					/>
 				</div>
 
@@ -28,20 +36,23 @@ function Header() {
 				</div>
 
 				<div className="text-white flex items-center space-x-6 text-xs mx-6 whitespace-nowrap">
-					<div className="link">
-						<p>Hello! Yeasin Arfat</p>
+					<div className="link" onClick={signIn}>
+						<p>{session ? 'Hello, ' + session.user.name : 'SignIn'}</p>
 						<p className="font-extrabold md:text-sm">Account & Lists</p>
 					</div>
 					<div className="link">
 						<p>Returns</p>
 						<p className="font-extrabold md:text-sm"> & Orders</p>
 					</div>
-					<div className="link relative flex items-center ">
+					<div
+						className="link relative flex items-center "
+						onClick={() => router.push('/checkout')}
+					>
 						<span
 							className="absolute top-0 right-0 md:right-11
             text-center bg-yellow-400 text-black font-bold w-4 h-4 rounded-full"
 						>
-							0
+							{items.length}
 						</span>
 						<FiShoppingBag className="h-10 w-8" />
 						<p className="font-extrabold md:text-sm hidden md:inline mt-2 ">Basket</p>

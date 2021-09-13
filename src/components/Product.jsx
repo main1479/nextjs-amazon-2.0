@@ -1,23 +1,21 @@
 /* eslint-disable @next/next/no-img-element */
 import Image from 'next/image';
-import { BsStarFill, BsStarHalf, BsStar } from 'react-icons/bs';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { addToBasket } from '../slices/basketSlice';
 import { FormatPrice } from '../utils/helpers';
+import Stars from './Stars';
 
-const MAX_RATING = 5;
-const MIN_RATING = 1;
+// function Product({ title, price, description, category, image, rating }) {
 
-function Product({ title, price, description, category, image, rating }) {
+function Product(props) {
+	const { title, price, description, category, image, rating } = props;
 	const [hasPrime] = useState(Math.random() > 0.5);
-	const tempStars = Array.from({ length: 5 }, (_, index) => {
-		const number = index + 0.5;
-		return (
-			<span key={index} className="flex text-yellow-400">
-				{rating.rate > number ? <BsStarFill /> : rating.rate > index ? <BsStarHalf /> : <BsStar />}
-			</span>
-		);
-	});
-
+	const dispatch = useDispatch();
+	const addToCart = () => {
+		const product = props;
+		dispatch(addToBasket(product));
+	};
 	return (
 		<div className="relative flex flex-col m-5 bg-white p-10 z-30 ">
 			<p className="absolute py-3 px-5 text-xs text-gray-500 italic top-0 font-semibold right-0">
@@ -25,7 +23,7 @@ function Product({ title, price, description, category, image, rating }) {
 			</p>
 			<Image src={image} objectFit="contain" width={200} height={200} alt={title} />
 			<h4 className="mt-5 mb-3 font-semibold">{title}</h4>
-			<div className="flex">{tempStars}</div>
+			<Stars rating={rating.rate} />
 			<p className="text-xs my-2 line-clamp-2">{description}</p>
 			<p className="font-semibold mb-3">
 				<FormatPrice price={price} />
@@ -36,7 +34,9 @@ function Product({ title, price, description, category, image, rating }) {
 					<p className="text-xs text-gray-500">Free next day delivery</p>
 				</div>
 			)}
-			<button className="mt-auto button">Add To Cart</button>
+			<button onClick={addToCart} className="mt-auto button">
+				Add To Cart
+			</button>
 		</div>
 	);
 }
